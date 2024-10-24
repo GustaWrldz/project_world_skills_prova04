@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:project_world_skills_prova04/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,36 +16,21 @@ class CadastroPage extends StatefulWidget {
 
 class _CadastroPageState extends State<CadastroPage> {
   final _formKey = GlobalKey<FormState>();
-  static SharedPreferences? _preferences;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController courseController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
   final TextEditingController confirmPassController = TextEditingController();
+  final Preferences preferences = Preferences();
 
-  Future<void> getPreferences()async {
-    _preferences ??=  await SharedPreferences.getInstance();
-  }
-
-
-
-  Future<bool?> setId(String? key, int? value) async {
-    await getPreferences();
-    // return _preferences.setInt(key, value!);
-  }
-
-
-
-   register() async {
+  register() async {
     final apiUrl = Uri.parse("http://10.196.200.22:3000/alunos");
     final name = nameController.text;
     final city = cityController.text;
     final course = courseController.text;
     final email = emailController.text;
     final pass = passController.text;
-
-    print(name);
 
     try {
       var response = await http.post(apiUrl,
@@ -57,7 +43,13 @@ class _CadastroPageState extends State<CadastroPage> {
             "senha": pass
           }));
 
-      print(response.body);
+      await preferences.setString("nome_completo", name);
+      await preferences.setString("cidade", city);
+      await preferences.setString("curso", course);
+      await preferences.setString("email", email);
+
+      await preferences.getString("email");
+
       Navigator.pushReplacementNamed(context, "/perfil");
     } catch (e) {
       print(e);
@@ -68,7 +60,8 @@ class _CadastroPageState extends State<CadastroPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
+        leading:
+            IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -126,7 +119,10 @@ class _CadastroPageState extends State<CadastroPage> {
                     return null;
                   },
                   controller: courseController,
+                  enableInteractiveSelection: true,
                   decoration: const InputDecoration(
+                      hintText: "Selecione uma opção",
+                      suffixIcon: Icon(Icons.arrow_downward),
                       label: Text("Curso"),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)))),
@@ -151,10 +147,13 @@ class _CadastroPageState extends State<CadastroPage> {
                   height: 20,
                 ),
                 TextFormField(
-                    obscureText: true,
+                  obscureText: true,
                   validator: (value) {
                     if (value == "") {
                       return "Campo obrigatorio";
+                    }
+                    if (value != confirmPassController.text) {
+                      return "As senhas devem ser iguais";
                     }
                     return null;
                   },
@@ -172,6 +171,10 @@ class _CadastroPageState extends State<CadastroPage> {
                   validator: (String? value) {
                     if (value == "") {
                       return "Campo obrigatorio";
+                    }
+
+                    if (passController.text != value) {
+                      return "As senhas devem ser iguais";
                     }
                     return null;
                   },
