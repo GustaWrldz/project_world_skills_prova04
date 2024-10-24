@@ -98,7 +98,8 @@ class _RankingPageState extends State<RankingPage> {
               alignment: Alignment.center,
               width: double.infinity,
               height: 100,
-              decoration: BoxDecoration(color: Colors.blue[100]),
+              decoration: BoxDecoration(
+                  color: Colors.blue[100], border: Border.all(width: 1)),
               child: Text(
                 "Ranking",
                 style: TextStyle(color: Colors.black),
