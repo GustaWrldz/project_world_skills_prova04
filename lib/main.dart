@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_world_skills_prova04/pages/cadastro_page.dart';
 import 'package:project_world_skills_prova04/pages/perfil_page.dart';
+import 'package:project_world_skills_prova04/pages/ranking_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,17 +15,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const CadastroPage(),
       routes: {
         '/cadastro': (context) => CadastroPage(),
-        "/perfil": (context) => PerfilPage()
-        // '/perfil': (context) 
+        "/perfil": (context) => PerfilPage(),
+        '/ranking': (context) => RankingPage()
       },
     );
   }
 }
-
-
